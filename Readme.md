@@ -103,3 +103,11 @@ Runs the `index.ts` in dev mode and watches for changes
 ### `npm run build`
 
 Builds the app for production to the `build` folder.
+
+### `npm run test`
+
+Runs the available tests cases.
+
+### `npm run test:watch`
+
+Runs the available tests cases in watch mode.
