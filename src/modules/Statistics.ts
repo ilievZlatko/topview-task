@@ -40,7 +40,9 @@ class Statistics {
 		});
 	}
 
-	async calculateGroupSums() {
+	async calculateGroupSums(): Promise<{
+		[key: string]: number;
+	}> {
 		const groupedTransactions = await this.groupTransactionsByPackage();
 		const keys = Object.keys(groupedTransactions);
 		const groupedSum: { [key: string]: number } = {};
@@ -70,7 +72,7 @@ class Statistics {
 		);
 	}
 
-	async leastTransactionspackage() {
+	async leastTransactionspackage(): Promise<string[]> {
 		const transactionsByPackage: { [key: string]: number } = {};
 
 		const stream = fs.createReadStream(this.filePath, { encoding: 'utf8' });
@@ -119,7 +121,7 @@ class Statistics {
 		return averageAmount;
 	}
 
-	async mostCommonPartySizeForCruise(packageName: string): Promise<number | null> {
+	async mostCommonPartySizeForCruise(packageName: string): Promise<number> {
 		const groupedTransactions = await this.groupTransactionsByPackage();
 
 		if (!groupedTransactions.hasOwnProperty(packageName)) {
@@ -138,7 +140,7 @@ class Statistics {
 		}
 
 		// Find the most common party size
-		let mostCommonPartySize: number | null = null;
+		let mostCommonPartySize: number = 0;
 		let highestCount = 0;
 
 		for (const partySize in partySizeCount) {

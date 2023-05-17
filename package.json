@@ -6,7 +6,7 @@
 	"scripts": {
 		"start": "npm run build && node build/index.js",
 		"dev": "nodemon",
-		"cpdir": "copyfiles -u 1 src/data build/data",
+		"cpdir": "cp -R ./src/data ./build/data",
 		"build": "rimraf ./build && tsc",
 		"postbuild": "yarn run cpdir",
 		"test": "echo \"Error: no test specified\" && exit 1"
@@ -15,10 +15,8 @@
 	"author": "Zlatko Iliev",
 	"license": "ISC",
 	"devDependencies": {
-		"@types/copyfiles": "^2.4.1",
 		"@types/node": "^20.1.5",
 		"@types/through2": "^2.0.38",
-		"copyfiles": "^2.4.1",
 		"nodemon": "^2.0.22",
 		"rimraf": "^5.0.0",
 		"ts-node": "^10.9.1",
