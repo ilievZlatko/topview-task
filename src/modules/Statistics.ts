@@ -1,4 +1,5 @@
 import fs from 'fs';
+import moment from 'moment';
 import JSONStream from 'jsonstream';
 import through2 from 'through2';
 import { Transaction } from '../interfaces/Transaction';
@@ -38,6 +39,24 @@ class Statistics {
 				reject(error);
 			});
 		});
+	}
+
+	private async groupTransactionsByYear(transactions: Transaction[]): Promise<{
+		[year: string]: Transaction[];
+	}> {
+		const groupedByTourName: { [year: string]: Transaction[] } = {};
+
+		for (const transaction of transactions) {
+			const year = moment(transaction.timestamp).format('YYYY');
+
+			if (!groupedByTourName[year]) {
+				groupedByTourName[year] = [transaction];
+			} else {
+				groupedByTourName[year].push(transaction);
+			}
+		}
+
+		return groupedByTourName;
 	}
 
 	async calculateGroupSums(): Promise<{
@@ -151,6 +170,59 @@ class Statistics {
 		}
 
 		return mostCommonPartySize;
+	}
+
+	async getSalesByYear(packageName: string, year: number) {
+		const groupedTransactions = await this.groupTransactionsByPackage();
+
+		if (!groupedTransactions.hasOwnProperty(packageName)) {
+			throw new Error('There is no package with this name!');
+		}
+
+		const transactionsByYear = await this.groupTransactionsByYear(groupedTransactions[packageName]);
+
+		const availableYears = Object.keys(transactionsByYear);
+
+		if (!availableYears.includes(year.toString())) {
+			throw new Error('No data for provided year!');
+		}
+
+		const sum = transactionsByYear[year].reduce((acc, transaction) => {
+			return acc + transaction.total_transaction_amount;
+		}, 0);
+
+		const totalNumOfTickets = transactionsByYear[year].reduce((acc, transaction) => {
+			return acc + transaction.total_number_of_tickets;
+		}, 0);
+
+		return { year, packageName, totalTransactionAmountSum: sum, totalNumOfTickets };
+	}
+
+	async getTotalTransactionAmountsPerYear(packageName: string) {
+		const groupedTransactions = await this.groupTransactionsByPackage();
+		const transactionsByYear = await this.groupTransactionsByYear(groupedTransactions[packageName]);
+
+		const salesPerYear: {
+			[key: string]: {
+				year: number;
+				packageName: string;
+				totalTransactionAmountSum: number;
+				totalNumOfTickets: number;
+			}[];
+		} = {};
+		const allYears = Object.keys(transactionsByYear);
+
+		for (const year of allYears) {
+			const salesByYear = await this.getSalesByYear(packageName, Number(year));
+
+			if (!salesPerYear[year]) {
+				salesPerYear[year] = [salesByYear];
+			} else {
+				salesPerYear[year].push(salesByYear);
+			}
+		}
+
+		return salesPerYear;
 	}
 }
 

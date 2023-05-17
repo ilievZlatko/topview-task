@@ -23,3 +23,10 @@ stats
 stats
 	.mostCommonPartySizeForCruise('City Lights Cruise')
 	.then((res) => console.log('Most common party size cruize for "City Lights Cruise" package is: ', res));
+
+/**
+ * Question 2
+ */
+stats.getSalesByYear('Skyline Dinner Cruise', 2019).then((res) => console.log(res));
+
+stats.getTotalTransactionAmountsPerYear('Skyline Dinner Cruise').then((res) => console.log(res));

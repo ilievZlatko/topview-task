@@ -33,13 +33,15 @@ interface Transaction {
 
 - All the methods available under the `Statistics` class:
 
-| Method                           |         args          | response                                    | Description                                                                                                  |
-| :------------------------------- | :-------------------: | :------------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
-| `groupTransactionsByPackage`     |          N/A          | `Promise<{ [key: string]: Transaction[] }>` | Reads the file and groups all transactions by package name                                                   |
-| `calculateGroupSums`             |          N/A          | `Promise<{ [key: string]: number; }>`       | Returns promise with array, first element is package name, second element is cumulative sum for this package |
-| `leastTransactionspackage`       |          N/A          | `Promise<string[]>`                         | Returns an array with package names that have the least transactions                                         |
-| `averageTransactionAmountByName` | `packageName: string` | `Promise<number>`                           | Returns number that is the average transaction amount per package name provided                              |
-| `mostCommonPartySizeForCruise`   | `packageName: string` | `Promise<number>`                           | Returns most common party size cruize for given package name                                                 |
+| Method                              |                args                 | response                                                                                                         | Description                                                                                                  |
+| :---------------------------------- | :---------------------------------: | :--------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| `groupTransactionsByPackage`        |                 N/A                 | `Promise<{ [key: string]: Transaction[] }>`                                                                      | Reads the file and groups all transactions by package name                                                   |
+| `calculateGroupSums`                |                 N/A                 | `Promise<{ [key: string]: number; }>`                                                                            | Returns promise with array, first element is package name, second element is cumulative sum for this package |
+| `leastTransactionspackage`          |                 N/A                 | `Promise<string[]>`                                                                                              | Returns an array with package names that have the least transactions                                         |
+| `averageTransactionAmountByName`    |        `packageName: string`        | `Promise<number>`                                                                                                | Returns number that is the average transaction amount per package name provided                              |
+| `mostCommonPartySizeForCruise`      |        `packageName: string`        | `Promise<number>`                                                                                                | Returns most common party size cruize for given package name                                                 |
+| `getSalesByYear`                    | `packageName: string, year: number` | `Promise<{ year: number; packageName: string; totalTransactionAmountSum: number; totalNumOfTickets: number;}>`   | Returns object with calculated values by provided year and package name                                      |
+| `getTotalTransactionAmountsPerYear` |        `packageName: string`        | `Promise<{ year: number; packageName: string; totalTransactionAmountSum: number; totalNumOfTickets: number;}[]>` | Returns an object with key year and value array of objects with the calculated statistics                    |
 
 - Usage example:
 
