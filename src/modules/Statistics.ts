@@ -1,7 +1,7 @@
 import fs from 'fs';
 import JSONStream from 'jsonstream';
 import through2 from 'through2';
-import { GroupedTransaction, Transaction } from '../interfaces/Transaction';
+import { Transaction } from '../interfaces/Transaction';
 
 class Statistics {
 	filePath: string;
@@ -105,14 +105,50 @@ class Statistics {
 		});
 	}
 
-	async averageTransactionAmountByName(packageName: string): Promise<string> {
+	async averageTransactionAmountByName(packageName: string): Promise<number> {
 		const groupedTransactions = await this.groupTransactionsByPackage();
+
+		if (!groupedTransactions.hasOwnProperty(packageName)) {
+			throw new Error('There is no package with this name!');
+		}
 
 		const averageAmount =
 			groupedTransactions[packageName].reduce((acc, trans) => acc + trans.total_transaction_amount, 0) /
 			groupedTransactions[packageName].length;
 
-		return `Average transaction amount for "${packageName}" is: ${averageAmount}`;
+		return averageAmount;
+	}
+
+	async mostCommonPartySizeForCruise(packageName: string): Promise<number | null> {
+		const groupedTransactions = await this.groupTransactionsByPackage();
+
+		if (!groupedTransactions.hasOwnProperty(packageName)) {
+			throw new Error('There is no package with this name!');
+		}
+
+		const partySizeCount: Record<number, number> = {};
+
+		for (const transaction of groupedTransactions[packageName]) {
+			const partySize = transaction.total_number_of_tickets;
+			if (partySizeCount[partySize]) {
+				partySizeCount[partySize]++;
+			} else {
+				partySizeCount[partySize] = 1;
+			}
+		}
+
+		// Find the most common party size
+		let mostCommonPartySize: number | null = null;
+		let highestCount = 0;
+
+		for (const partySize in partySizeCount) {
+			if (partySizeCount[partySize] > highestCount) {
+				mostCommonPartySize = Number(partySize);
+				highestCount = partySizeCount[partySize];
+			}
+		}
+
+		return mostCommonPartySize;
 	}
 }
 
