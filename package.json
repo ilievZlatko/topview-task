@@ -8,7 +8,7 @@
 		"dev": "nodemon",
 		"cpdir": "cp -R ./src/data ./build/data",
 		"build": "rimraf ./build && tsc",
-		"postbuild": "yarn run cpdir",
+		"postbuild": "npm run cpdir",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
